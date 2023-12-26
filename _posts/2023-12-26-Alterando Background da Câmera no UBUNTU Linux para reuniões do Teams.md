@@ -172,7 +172,7 @@ Com o sucesso, deve aparecer a imagem de fundo dessa forma:
 
 Certifique-se de escolher nas configurações o device virtual criado.
 
-![teams-ok](../../assets/images/teams_ok.png){: .normal w="700" h="400" }
+![teams_ok](../../assets/images/teams_ok.png){: .normal w="700" h="400" }
 
 
 7. E agora ?
