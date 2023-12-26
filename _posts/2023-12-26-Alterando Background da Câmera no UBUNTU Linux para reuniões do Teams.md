@@ -1,7 +1,11 @@
 ---
-title: Alterando Background da Câmera no UBUNTU Linux para reuniões do Teams
+title: Customizando Background da Câmera no UBUNTU Linux para reuniões do Teams
 date: 2023-12-26 12:12:12 +/-TTTT
 categories: [Sharing Knowledge, Security]
+img_path: ../../assets/images
+image:
+  path: teams_ok.png
+  alt: image alternative text
 tags: [general]     # TAG names should always be lowercase
 ---
 
@@ -11,7 +15,7 @@ tags: [general]     # TAG names should always be lowercase
 
 Já faz algum tempo que a microsoft implementou no aplicativo de reuniões Microsoft Teams a opção de alterar o background da sua câmera. E isso permite utilizar imagens que o próprio teams disponibiliza como essa:
 
-![Background Padrão Teams](../../assets/images/wallpaper_teams_normal.png){: .normal w="300" h="150" }
+![Background Padrão Teams](wallpaper_teams_normal.png){: .normal w="300" h="150" }
 
 Entretanto, para algumas empresas é interessante customizar o wallpaper do fundo da tela para alguma imagem padrão da companhia, isso passa uma imagem de profissionalismo e dependendo do tipo de apresentação que você for fazer, pode ser interessante utilizar um background customizado da empresa.
 
@@ -62,7 +66,7 @@ ls -l /dev/video*
 
 A saída deve ser algo parecido com a imagem abaixo:
 
-![listing video devices](../../assets/images/listing_device.png){: .normal w="700" h="400" }
+![listing video devices](listing_device.png){: .normal w="700" h="400" }
 
 No meu caso, o último device físico é o /dev/video4, então eu posso criar a partir do /dev/video5 sem comprometer minha webcam.
 
@@ -76,7 +80,7 @@ ffplay /dev/video1
 
 Teste com todos os devices que você tiver, no meu caso o que funcionou corretamente foi o /dev/video1, note que outros podem funcionar, entretanto dependendo da sua webcam pode ter mais de um device funcional. Escolha o que for mais próximo da sua realidade.
 
-![ffplay](../../assets/images/ffplay.png){: .normal w="700" h="400" }
+![ffplay](ffplay.png){: .normal w="700" h="400" }
 
 3. Depois que já identificamos qual o device real iremos utilizar para gerar o device virtual, o usaremos o v4l2loopback para criação.
 
@@ -166,13 +170,13 @@ ffplay /dev/video6
 
 Com o sucesso, deve aparecer a imagem de fundo dessa forma:
 
-![teste-ok](../../assets/images/teste-ok.png){: .normal w="700" h="400" }
+![teste-ok](teste-ok.png){: .normal w="700" h="400" }
 
 6. Maravilha! Se deu certo até aqui, você já pode testar no seu teams:
 
 Certifique-se de escolher nas configurações o device virtual criado.
 
-![teams_ok](../../assets/images/teams_ok.png){: .normal w="700" h="400" }
+![teams_ok](teams_ok.png){: .normal w="700" h="400" }
 
 
 7. E agora ?
