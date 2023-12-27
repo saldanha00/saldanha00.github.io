@@ -52,13 +52,14 @@ sudo apt -y install ffmpeg v4l-utils
 sudo apt -y install v4l2loopback-dkms
 ```
 
-1. Clone o repositório [Linux-Fake-Background-Webcam](https://github.com/fangfufu/Linux-Fake-Background-Webcam)
+3. Clone o repositório [Linux-Fake-Background-Webcam](https://github.com/fangfufu/Linux-Fake-Background-Webcam)
 
 ```bash
 git clone https://github.com/fangfufu/Linux-Fake-Background-Webcam.git
 ```
 
 4. Certifique-se de ter instalado o [python3](https://www.python.org/downloads/)
+
 
 ```bash
 python3 --version
@@ -69,11 +70,11 @@ python3 --version
 1. Vamos criar o device virtual, para isso liste os devices que você já tem, pois cada device possui uma numeração e não podemos sobrescrever nenhum.
 
 ```bash
-v4l2-ctl --list-devices
+sudo v4l2-ctl --list-devices
 ```
 
 ```bash
-ls -l /dev/video*
+sudo ls -l /dev/video*
 ```
 
 A saída deve ser algo parecido com a imagem abaixo:
