@@ -40,34 +40,34 @@ Testado em: Ubuntu Linux 22.04.3 LTS
 
 ## Instalação
 
-1. Precisamos instalar o pacote ffmpeg e v4l-utils para testar o device virtual e facilitar a identificação:
-   
+1 - Precisamos instalar o pacote ffmpeg e v4l-utils para testar o device virtual e facilitar a identificação:
+
 ```bash
 sudo apt -y install ffmpeg v4l-utils
 ```
 
-2. Para criar o device virtual, utilizaremos o [v4l2loopback-dkms](https://github.com/umlaeute/v4l2loopback)
+2 - Para criar o device virtual, utilizaremos o [v4l2loopback-dkms](https://github.com/umlaeute/v4l2loopback)
 
 ```bash
 sudo apt -y install v4l2loopback-dkms
 ```
 
-3. Clone o repositório [Linux-Fake-Background-Webcam](https://github.com/fangfufu/Linux-Fake-Background-Webcam)
+3 - Clone o repositório [Linux-Fake-Background-Webcam](https://github.com/fangfufu/Linux-Fake-Background-Webcam)
 
 ```bash
 git clone https://github.com/fangfufu/Linux-Fake-Background-Webcam.git
 ```
 
-4. Certifique-se de ter instalado o [python3](https://www.python.org/downloads/)
+4 - Certifique-se de ter instalado o [python3](https://www.python.org/downloads/)
 
 
 ```bash
 python3 --version
-``````
+```
 
 ## Passo a Passo
 
-1. Vamos criar o device virtual, para isso liste os devices que você já tem, pois cada device possui uma numeração e não podemos sobrescrever nenhum.
+1 - Vamos criar o device virtual, para isso liste os devices que você já tem, pois cada device possui uma numeração e não podemos sobrescrever nenhum.
 
 ```bash
 sudo v4l2-ctl --list-devices
@@ -83,7 +83,7 @@ A saída deve ser algo parecido com a imagem abaixo:
 
 No meu caso, o último device físico é o /dev/video4, então eu posso criar a partir do /dev/video5 sem comprometer minha webcam. Para esse teste irei utilizar o /dev/video6
 
-2. Verificando qual o principal device físico da sua webcam
+2 - Verificando qual o principal device físico da sua webcam
 
 Para isso, utilizaremos o ffmpeg para testar cada um dos devices:
 
@@ -95,7 +95,7 @@ Teste com todos os devices que você tiver, no meu caso o que funcionou corretam
 
 ![ffplay](ffplay.png){: .normal w="700" h="400" }
 
-3. Depois que já identificamos qual o device real iremos utilizar para gerar o device virtual, o usaremos o v4l2loopback para criação.
+3 - Depois que já identificamos qual o device real iremos utilizar para gerar o device virtual, o usaremos o v4l2loopback para criação.
 
 tenha certeza que não há nenhum device virtual já criado, o comando abaixo deleta os existentes (em memória, qualquer problema é só rebootar. Mas se você nunca criou um device virtual de video ou audio antes, não há com o que se preocupar).
 
@@ -111,7 +111,7 @@ sudo modprobe v4l2loopback devices=1 exclusive_caps=1 video_nr=6 card_label="fak
 
 Cheque se o device foi criado, conforme demonstrado no passo 1 de listagem.
 
-4. Instalação do projeto Linux-Fake-Background-Webcam 
+4 - Instalação do projeto Linux-Fake-Background-Webcam 
    
 Navegue até a raiz da pasta do repositório que você clonou do Linux-Fake-Background-Webcam 
 
@@ -151,7 +151,7 @@ threshold = 50
 
 não se preocupe a principio com os valores de width e height, depois do teste você ajusta conforme necessário.
 
-5. Testando
+5 - Testando
 
 Com tudo configurado corretamente, vamos testar (certifique-se de que o lfbw está devidamente instalado conforme passo 4):
 
@@ -185,14 +185,14 @@ Com o sucesso, deve aparecer a imagem de fundo dessa forma:
 
 ![teste-ok](teste-ok.png){: .normal w="700" h="400" }
 
-6. Maravilha! Se deu certo até aqui, você já pode testar no seu teams:
+6 - Maravilha! Se deu certo até aqui, você já pode testar no seu teams:
 
 Certifique-se de escolher nas configurações o device virtual criado.
 
 ![teams_ok](teams_ok.png){: .normal w="700" h="400" }
 
 
-7. E agora ?
+7 - E agora ?
 
 Com isso você já consegue entrar em reuniões com backgrounds personalizados, entretanto  se você reiniciar sua máquina vai precisar realizar o passo 3 e 5 novamente.
 
