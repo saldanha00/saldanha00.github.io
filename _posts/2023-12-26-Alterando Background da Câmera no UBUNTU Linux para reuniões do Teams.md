@@ -40,19 +40,19 @@ Testado em: Ubuntu Linux 22.04.3 LTS
 
 ## Instalação
 
-1. Precisamos instalar o pacote ffmpeg para testar o device virtual:
+1. Precisamos instalar o pacote ffmpeg e v4l-utils para testar o device virtual e facilitar a identificação:
    
 ```bash
-sudo apt install ffmpeg
+sudo apt -y install ffmpeg v4l-utils
 ```
 
 2. Para criar o device virtual, utilizaremos o [v4l2loopback-dkms](https://github.com/umlaeute/v4l2loopback)
 
 ```bash
-apt install v4l2loopback-dkms
+sudo apt -y install v4l2loopback-dkms
 ```
 
-3. Clone o repositório [Linux-Fake-Background-Webcam](git clone https://github.com/fangfufu/Linux-Fake-Background-Webcam.git)
+1. Clone o repositório [Linux-Fake-Background-Webcam](https://github.com/fangfufu/Linux-Fake-Background-Webcam)
 
 ```bash
 git clone https://github.com/fangfufu/Linux-Fake-Background-Webcam.git
