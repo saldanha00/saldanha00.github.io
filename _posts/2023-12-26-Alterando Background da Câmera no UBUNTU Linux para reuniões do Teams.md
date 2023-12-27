@@ -19,7 +19,7 @@ Já faz algum tempo que a microsoft implementou no aplicativo de reuniões Micro
 
 Entretanto, para algumas empresas é interessante customizar o wallpaper do fundo da tela para alguma imagem padrão da compania, isso passa uma imagem de profissionalismo e dependendo do tipo de apresentação que você for fazer, pode ser interessante utilizar um background customizado da empresa.
 
-O problema ocorre que para usuários do Ubuntu, mas vale para as outras distribuições também. **A microsoft não disponibiliza a feature que envolve carregar uma imagem customizada para o background. Apenas usuários do windows premium tem essa regalia.**
+O problema é: Para usuários do Ubuntu, mas vale para as outras distribuições Linux também. **A microsoft não disponibiliza a feature que envolve carregar uma imagem customizada para o background. Apenas usuários do windows premium tem essa regalia.**
 
 Fonte: https://support.microsoft.com/en-us/office/change-your-background-in-microsoft-teams-meetings-f77a2381-443a-499d-825e-509a140f4780
 
@@ -124,7 +124,7 @@ python3 -m pip install --upgrade .
 
 >Caso aconteça algum erro na instalação das dependencias, [verifique no projeto](https://github.com/fangfufu/Linux-Fake-Background-Webcam/tree/master).
 
-Agora iremos configurar o arquivo config-example.ini. Abaixo há uma sugestão,
+Agora iremos configurar o arquivo **config-example.ini**. Abaixo há uma sugestão,
 
 Mas o que iremos precisar mesmo é adicionando o campo "background-image" com o path da imagem que você deseja adicionar no fundo.
 
@@ -197,7 +197,7 @@ Volte para a raiz do projeto github, dentro dele tem uma pasta "systemd-user". S
 
 vamos copiar o arquivo lfbw.service que está dentro da pasta systemd-user para o /etc/systemd/system no caso do ubuntu ou dependendo da sua distribuição, o local onde ficam os arquivos ".service", 
 
->Na dúvida pergunte ao chatgpt onde fica na sua distribuição.
+>Na dúvida pergunte ao chatgpt o path so serviços da sua distribuição Linux.
 
 ```bash
 sudo cp -a lfbw.service /etc/systemd/system/
@@ -211,7 +211,7 @@ cp -a lfbw_start_wrapper.sh ~/.local/bin/lfbw_start_wrapper.sh"
 
 agora edite o arquivo lfbw.service corrigindo o path do script para sua home:
 
-vi /etc/systemd/system/lfbw.service
+- vi /etc/systemd/system/lfbw.service
 
 ```text
 # systemd user unit file for Linux-Fake-Background-Webcam
@@ -242,13 +242,14 @@ WantedBy=default.target
 
 ```
 
-Agora edite o arquivo lfbw_start_wrapper.sh que copiou para sua home:
+Agora edite o arquivo lfbw_start_wrapper.sh que copiou para sua home (Se atente para o número do parâmetro "video_nr" que deve ser o número do device virtual da câmera, que irá ser criado.):
 
 vi ~/.local/bin/lfbw_start_wrapper.sh
 
 ```text
 #!/bin/bash
-
+sudo modprobe -r v4l2loopback
+sudo modprobe v4l2loopback devices=1 exclusive_caps=1 video_nr=6 card_label="fake-cam"
 sudo -u {{SEU_USUARIO_DA_MAQUINA_AQUI}} /home/{{SEU_USUARIO_DA_MAQUINA_AQUI}}/.local/bin/lfbw -c "{{PATH_DO_config-example.ini}}"
 ```
 
@@ -275,3 +276,11 @@ se estiver tudo certo, habilite na inicialização do sistema operacional:
 ```bash
 systemctl enable lfbw
 ```
+
+---
+
+## Muito bem! Chegamos até aqui. O que falta ?
+
+- Falta elaborar uma forma mais eficiente de manter o device virtual sempre funcionando, há casos onde dependendo da inicialização do sistema a webcam original não surge no sempre device (/dev/video2). Há casos onde surge no /dev/video0 ou /dev/video1, etc...
+
+Caso isso aconteça com você, basta repetir o passo 2 e editar o arquivo config-example.ini conforme passo 4.
