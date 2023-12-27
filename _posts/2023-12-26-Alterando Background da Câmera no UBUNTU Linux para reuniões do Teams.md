@@ -54,6 +54,10 @@ apt install v4l2loopback-dkms
 
 3. Clone o repositório [Linux-Fake-Background-Webcam](git clone https://github.com/fangfufu/Linux-Fake-Background-Webcam.git)
 
+```bash
+git clone https://github.com/fangfufu/Linux-Fake-Background-Webcam.git
+```
+
 4. Certifique-se de ter instalado o [python3](https://www.python.org/downloads/)
 
 ```bash
