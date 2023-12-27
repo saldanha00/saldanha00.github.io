@@ -1,12 +1,12 @@
 ---
-title: Customizando Background da Câmera no UBUNTU Linux para reuniões do Teams
+title: Adicionando Filtro de Tela de Fundo Customizado direto na câmera do UBUNTU Linux para reuniões do Teams
 date: 2023-12-26 12:12:12 +/-TTTT
-categories: [Sharing Knowledge, Security]
+categories: [Sharing Knowledge, Linux]
 img_path: ../../assets/images
 image:
   path: teams_ok.png
-  alt: image alternative text
-tags: [general]     # TAG names should always be lowercase
+  alt: Background Personalizado com device virtual
+tags: [linux,webcam,teams]     # TAG names should always be lowercase
 ---
 
 
@@ -17,9 +17,11 @@ Já faz algum tempo que a microsoft implementou no aplicativo de reuniões Micro
 
 ![Background Padrão Teams](wallpaper_teams_normal.png){: .normal w="300" h="150" }
 
-Entretanto, para algumas empresas é interessante customizar o wallpaper do fundo da tela para alguma imagem padrão da companhia, isso passa uma imagem de profissionalismo e dependendo do tipo de apresentação que você for fazer, pode ser interessante utilizar um background customizado da empresa.
+Entretanto, para algumas empresas é interessante customizar o wallpaper do fundo da tela para alguma imagem padrão da compania, isso passa uma imagem de profissionalismo e dependendo do tipo de apresentação que você for fazer, pode ser interessante utilizar um background customizado da empresa.
 
-O problema ocorre que para usuários Linux, especificamente para os que utilizam ubuntu, mas vale para as outras distribuições também. **A microsoft não disponibiliza a feature que envolve carregar uma imagem customizada para o background. Apenas usuários do windows tem essa regalia.**
+O problema ocorre que para usuários do Ubuntu, mas vale para as outras distribuições também. **A microsoft não disponibiliza a feature que envolve carregar uma imagem customizada para o background. Apenas usuários do windows premium tem essa regalia.**
+
+Fonte: https://support.microsoft.com/en-us/office/change-your-background-in-microsoft-teams-meetings-f77a2381-443a-499d-825e-509a140f4780
 
 ---
 
@@ -31,6 +33,8 @@ Nesse artigo **vamos descer um pouco o nível**. Não vamos trabalhar na camada 
 Nesse device virtual que vamos criar, iremos configurar no teams para utilizar o device virtual ao invés da câmera original, sendo assim **possível ter o background que quisermos, independente do aplicativo de reuniões, seja teams, google meeting, zoom, etc.**
 
 Por sorte, já temos na comunidade o [lfbw](https://github.com/fangfufu/Linux-Fake-Background-Webcam/tree/master) que irá nos auxiliar **MUITO** na resolução.
+
+Testado em: Ubuntu Linux 22.04.3 LTS
 
 ---
 
@@ -52,6 +56,10 @@ apt install v4l2loopback-dkms
 
 4. Certifique-se de ter instalado o [python3](https://www.python.org/downloads/)
 
+```bash
+python3 --version
+``````
+
 ## Passo a Passo
 
 1. Vamos criar o device virtual, para isso liste os devices que você já tem, pois cada device possui uma numeração e não podemos sobrescrever nenhum.
@@ -68,7 +76,7 @@ A saída deve ser algo parecido com a imagem abaixo:
 
 ![listing video devices](listing_device.png){: .normal w="700" h="400" }
 
-No meu caso, o último device físico é o /dev/video4, então eu posso criar a partir do /dev/video5 sem comprometer minha webcam.
+No meu caso, o último device físico é o /dev/video4, então eu posso criar a partir do /dev/video5 sem comprometer minha webcam. Para esse teste irei utilizar o /dev/video6
 
 2. Verificando qual o principal device físico da sua webcam
 
