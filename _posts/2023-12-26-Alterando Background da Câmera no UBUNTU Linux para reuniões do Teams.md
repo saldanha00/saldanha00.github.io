@@ -4,7 +4,7 @@ date: 2023-12-26 12:12:12 +/-TTTT
 categories: [Sharing Knowledge, Linux]
 img_path: ../../assets/images
 image:
-  path: teams_ok.png
+  path: teste-ok.png
   alt: Background Personalizado com device virtual
 tags: [linux,webcam,teams]     # TAG names should always be lowercase
 ---
