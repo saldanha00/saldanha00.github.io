@@ -10,6 +10,13 @@ tags: [linux,webcam,teams]     # TAG names should always be lowercase
 ---
 
 
+{% include embed/youtube.html id='ORRaHV9HSrI' %}
+<!-- https://youtu.be/ORRaHV9HSrI -->
+
+---
+
+
+
 {: .prompt-warning }
 > Qual problema esse artigo resolve ?
 
