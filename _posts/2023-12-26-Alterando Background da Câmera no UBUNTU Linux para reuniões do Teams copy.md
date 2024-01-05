@@ -67,10 +67,11 @@ git clone https://github.com/fangfufu/Linux-Fake-Background-Webcam.git
 
 4 - Certifique-se de ter instalado o [python3](https://www.python.org/downloads/)
 
-
 ```bash
 python3 --version
 ```
+
+---
 
 ## Passo a Passo
 
@@ -198,8 +199,9 @@ Certifique-se de escolher nas configurações o device virtual criado.
 
 ![teams_ok](teams_ok.png){: .normal w="700" h="400" }
 
+---
 
-7 - E agora ?
+## E agora ?
 
 Com isso você já consegue entrar em reuniões com backgrounds personalizados, entretanto  se você reiniciar sua máquina vai precisar realizar o passo 3 e 5 novamente.
 
