@@ -15,6 +15,18 @@ tags: [cybersecurity,web]     # TAG names should always be lowercase
 
 ---
 
+- [1 - O que é clickjacking](#1---o-que-é-clickjacking)
+- [2 - Cenário de ataque Clickjacking](#2---cenário-de-ataque-clickjacking)
+  - [2.1 - Clickjacking utilizando Imagens](#21---clickjacking-utilizando-imagens)
+  - [2.2 - Clickjacking para Download de malwares](#22---clickjacking-para-download-de-malwares)
+  - [2.3 - Clickjacking Clássico (iframes)](#23---clickjacking-clássico-iframes)
+- [Bypassing de CSRF](#bypassing-de-csrf)
+- [Como Corrigir Clickjacking?](#como-corrigir-clickjacking)
+- [Conclusão](#conclusão)
+- [Fontes e Referências](#fontes-e-referências)
+
+
+
 
 
 {: .prompt-warning }
@@ -67,11 +79,11 @@ Ao passar o mouse em cima do meme, percebe que é "clicável", prontamente Jonas
 
 Aqui temos um exemplo de clickjacking. No gif acima é possível ver que Jonas foi redirecionado para um link arbitrariamente escolhido pelo atacante. Ao pensar que estava clicando no meme quando na verdade estava clicando em uma camada posta propositalmente na frente do meme.
 
-Isso acontece pois existem duas camadas nessa imagem. Uma é a própria imagem em si:
+  ```html
+    <img src="images/memes1.jpeg" alt="Meme 1">
+  ```
 
-```html
-<img src="images/memes1.jpeg" alt="Meme 1">
-```
+<br>
 
 E a outra camada, que fica por cima da imagem é um link que leva a uma origem arbitrária. Atenção para a class "invisible-link":
 
