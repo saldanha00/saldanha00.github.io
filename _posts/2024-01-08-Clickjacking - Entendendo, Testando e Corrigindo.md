@@ -15,6 +15,7 @@ tags: [cybersecurity,web]     # TAG names should always be lowercase
 
 ---
 
+- [Objetivo do Artigo](#objetivo-do-artigo)
 - [1 - O que é clickjacking](#1---o-que-é-clickjacking)
 - [2 - Cenário de ataque Clickjacking](#2---cenário-de-ataque-clickjacking)
   - [2.1 - Clickjacking utilizando Imagens](#21---clickjacking-utilizando-imagens)
@@ -27,7 +28,7 @@ tags: [cybersecurity,web]     # TAG names should always be lowercase
 
 
 
-
+## Objetivo do Artigo
 
 {: .prompt-warning }
 > Qual problema esse artigo resolve ?
@@ -336,7 +337,7 @@ A partir daqui, o principio é o mesmo. Adicionar uma camada transparente na fre
 
 ![clickjacking_lab](lab_clickjacking.gif){: .normal w="700" h="400" } 
 
-
+---
 
 ## Bypassing de CSRF
 
@@ -387,6 +388,7 @@ Veja como no resultado como ao tentar importar novamente o site dos memes recebe
 
 ![corrigido_csp](corrigido_csp.png){: .normal w="700" h="400" }
 
+---
 
 ## Conclusão
 
@@ -396,6 +398,7 @@ Dito isso, vale lembrar que é sempre válido analisar os headers de resposta da
 
 Espero que depois desse artigo o conceito de clickjacking tenha ficado mais claro e seu apetite por conhecer mais headers de resposta dos servidores tenha aumentado! Obrigado.
 
+---
 
 ## Fontes e Referências
 
