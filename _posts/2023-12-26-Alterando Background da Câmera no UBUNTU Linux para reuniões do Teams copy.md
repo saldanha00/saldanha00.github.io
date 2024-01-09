@@ -9,13 +9,28 @@ image:
 tags: [linux,webcam,teams]     # TAG names should always be lowercase
 ---
 
-
 {% include embed/youtube.html id='ORRaHV9HSrI' %}
 <!-- https://youtu.be/ORRaHV9HSrI -->
 
 ---
 
+- [Qual a ideia?](#qual-a-ideia)
+- [Instalação e Preparação do Ambiente](#instalação-e-preparação-do-ambiente)
+- [Passo a Passo](#passo-a-passo)
+  - [1 - Vamos criar o device virtual, para isso liste os devices que você já tem, pois cada device possui uma numeração e não podemos sobrescrever nenhum.](#1---vamos-criar-o-device-virtual-para-isso-liste-os-devices-que-você-já-tem-pois-cada-device-possui-uma-numeração-e-não-podemos-sobrescrever-nenhum)
+  - [2 - Verificando qual o principal device físico da sua webcam](#2---verificando-qual-o-principal-device-físico-da-sua-webcam)
+  - [3 - Depois que já identificamos qual o device real iremos utilizar para gerar o device virtual, o usaremos o v4l2loopback para criação.](#3---depois-que-já-identificamos-qual-o-device-real-iremos-utilizar-para-gerar-o-device-virtual-o-usaremos-o-v4l2loopback-para-criação)
+  - [4 - Instalação do projeto Linux-Fake-Background-Webcam](#4---instalação-do-projeto-linux-fake-background-webcam)
+  - [5 - Testando](#5---testando)
+  - [6 - Maravilha! Se deu certo até aqui, você já pode testar no seu teams:](#6---maravilha-se-deu-certo-até-aqui-você-já-pode-testar-no-seu-teams)
+- [E agora ? Criando serviço](#e-agora--criando-serviço)
+- [Muito bem! Chegamos até aqui. O que falta ?](#muito-bem-chegamos-até-aqui-o-que-falta-)
 
+---
+
+
+
+# Qual a ideia?
 
 {: .prompt-warning }
 > Qual problema esse artigo resolve ?
@@ -45,7 +60,7 @@ Testado em: Ubuntu Linux 22.04.3 LTS
 
 ---
 
-## Instalação
+# Instalação e Preparação do Ambiente
 
 1 - Precisamos instalar o pacote ffmpeg e v4l-utils para testar o device virtual e facilitar a identificação:
 
@@ -73,9 +88,9 @@ python3 --version
 
 ---
 
-## Passo a Passo
+# Passo a Passo
 
-1 - Vamos criar o device virtual, para isso liste os devices que você já tem, pois cada device possui uma numeração e não podemos sobrescrever nenhum.
+## 1 - Vamos criar o device virtual, para isso liste os devices que você já tem, pois cada device possui uma numeração e não podemos sobrescrever nenhum.
 
 ```bash
 sudo v4l2-ctl --list-devices
@@ -91,7 +106,7 @@ A saída deve ser algo parecido com a imagem abaixo:
 
 No meu caso, o último device físico é o /dev/video4, então eu posso criar a partir do /dev/video5 sem comprometer minha webcam. Para esse teste irei utilizar o /dev/video6
 
-2 - Verificando qual o principal device físico da sua webcam
+## 2 - Verificando qual o principal device físico da sua webcam
 
 Para isso, utilizaremos o ffmpeg para testar cada um dos devices:
 
@@ -103,7 +118,7 @@ Teste com todos os devices que você tiver, no meu caso o que funcionou corretam
 
 ![ffplay](ffplay.png){: .normal w="700" h="400" }
 
-3 - Depois que já identificamos qual o device real iremos utilizar para gerar o device virtual, o usaremos o v4l2loopback para criação.
+## 3 - Depois que já identificamos qual o device real iremos utilizar para gerar o device virtual, o usaremos o v4l2loopback para criação.
 
 tenha certeza que não há nenhum device virtual já criado, o comando abaixo deleta os existentes (em memória, qualquer problema é só rebootar. Mas se você nunca criou um device virtual de video ou audio antes, não há com o que se preocupar).
 
@@ -119,7 +134,7 @@ sudo modprobe v4l2loopback devices=1 exclusive_caps=1 video_nr=6 card_label="fak
 
 Cheque se o device foi criado, conforme demonstrado no passo 1 de listagem.
 
-4 - Instalação do projeto Linux-Fake-Background-Webcam 
+## 4 - Instalação do projeto Linux-Fake-Background-Webcam 
    
 Navegue até a raiz da pasta do repositório que você clonou do Linux-Fake-Background-Webcam 
 
@@ -143,23 +158,28 @@ Mas o que iremos precisar mesmo é adicionando o campo "background-image" com o 
 
 E alterar o valor do "webcam-path" para o device correto que você identificou no passo 2 (utilizando ffplay)
 
+<details>
+  <summary>config-example.ini</summary>
 
-```text
-width = 640
-height = 480
-fps = 30
-; no-background = yes
-background-keep-aspect = no
-no-foreground = yes
-webcam-path = /dev/video1
-background-image = /opt/Linux-Fake-Background-Webcam/background.jpg
-v4l2loopback-path = /dev/video6
-threshold = 50
-``````
+    {% highlight text %}
 
-não se preocupe a principio com os valores de width e height, depois do teste você ajusta conforme necessário.
+      width = 640
+      height = 480
+      fps = 30
+      ; no-background = yes
+      background-keep-aspect = no
+      no-foreground = yes
+      webcam-path = /dev/video1
+      background-image = /opt/Linux-Fake-Background-Webcam/background.jpg
+      v4l2loopback-path = /dev/video6
+      threshold = 50
+  {% endhighlight text %}
+</details>
+<br>
 
-5 - Testando
+Não se preocupe a principio com os valores de width e height, depois do teste você ajusta conforme necessário.
+
+## 5 - Testando
 
 Com tudo configurado corretamente, vamos testar (certifique-se de que o lfbw está devidamente instalado conforme passo 4):
 
@@ -193,7 +213,7 @@ Com o sucesso, deve aparecer a imagem de fundo dessa forma:
 
 ![teste-ok](teste-ok.png){: .normal w="700" h="400" }
 
-6 - Maravilha! Se deu certo até aqui, você já pode testar no seu teams:
+## 6 - Maravilha! Se deu certo até aqui, você já pode testar no seu teams:
 
 Certifique-se de escolher nas configurações o device virtual criado.
 
@@ -201,7 +221,7 @@ Certifique-se de escolher nas configurações o device virtual criado.
 
 ---
 
-## E agora ?
+# E agora ? Criando serviço
 
 Com isso você já consegue entrar em reuniões com backgrounds personalizados, entretanto  se você reiniciar sua máquina vai precisar realizar o passo 3 e 5 novamente.
 
@@ -225,16 +245,14 @@ cp -a lfbw_start_wrapper.sh ~/.local/bin/lfbw_start_wrapper.sh"
 
 agora edite o arquivo lfbw.service corrigindo o path do script para sua home:
 
-- vi /etc/systemd/system/lfbw.service
+```bash
+vi /etc/systemd/system/lfbw.service
+```
 
-```text
-# systemd user unit file for Linux-Fake-Background-Webcam
-# place this file into a location suitable for user-defined systemd units
-# (e.g $HOME/.config/systemd/user)
-#
-# To enable and run the fakecam service, run
-# systemctl --user enable fakecam.service
-# systemctl --user start fakecam.service
+<details>
+<summary>lfbw.service</summary>
+
+{% highlight bash %}
 
 [Unit]
 Description=Fake camera
@@ -242,30 +260,36 @@ After=network.target
 
 [Service]
 Type=simple
-# Use start wrapper
 
 #Edite a linha abaixo
 ExecStart=/home/{USERNAME_HOME_HERE}/.local/bin/lfbw_start_wrapper.sh
 
-# LFBW exits when pressing Ctrl + \ which corresponds to SIGQUIT
-# so we need to specify this kill signal instead of SIGINT
 KillSignal=SIGQUIT
 
 [Install]
 WantedBy=default.target
 
-```
+{% endhighlight bash %}
+</details>
 
 Agora edite o arquivo lfbw_start_wrapper.sh que copiou para sua home (Se atente para o número do parâmetro "video_nr" que deve ser o número do device virtual da câmera, que irá ser criado.):
 
+```bash
 vi ~/.local/bin/lfbw_start_wrapper.sh
+```
 
-```text
+<details>
+<summary>lfbw_start_wrapper.sh</summary>
+
+{% highlight bash %}
+
 #!/bin/bash
 sudo modprobe -r v4l2loopback
 sudo modprobe v4l2loopback devices=1 exclusive_caps=1 video_nr=6 card_label="fake-cam"
 sudo -u {{SEU_USUARIO_DA_MAQUINA_AQUI}} /home/{{SEU_USUARIO_DA_MAQUINA_AQUI}}/.local/bin/lfbw -c "{{PATH_DO_config-example.ini}}"
-```
+
+{% endhighlight bash %}
+</details>
 
 Um reload para salvar o novo serviço:
 
@@ -293,7 +317,7 @@ systemctl enable lfbw
 
 ---
 
-## Muito bem! Chegamos até aqui. O que falta ?
+# Muito bem! Chegamos até aqui. O que falta ?
 
 - Falta elaborar uma forma mais eficiente de manter o device virtual sempre funcionando, há casos onde dependendo da inicialização do sistema a webcam original não surge no sempre device (/dev/video2). Há casos onde surge no /dev/video0 ou /dev/video1, etc...
 

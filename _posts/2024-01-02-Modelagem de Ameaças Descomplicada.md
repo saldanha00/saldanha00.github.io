@@ -8,6 +8,28 @@ image:
 tags: [ciberecurity,appsec]     # TAG names should always be lowercase
 ---
 
+- [Modelagem de Ameaças ( Threat Modelling )](#modelagem-de-ameaças--threat-modelling-)
+  - [O que é a Modelagem de Ameaças?](#o-que-é-a-modelagem-de-ameaças)
+    - [Diferenciação entre Ameaça x Vulnerabilidade.](#diferenciação-entre-ameaça-x-vulnerabilidade)
+      - [Exemplos de cenários entre Ameaça x Vulnerabilidade](#exemplos-de-cenários-entre-ameaça-x-vulnerabilidade)
+      - [Por que devo incluir uma modelagem de ameaças?](#por-que-devo-incluir-uma-modelagem-de-ameaças)
+  - [Começando a Modelar: Decomposição do Sistema](#começando-a-modelar-decomposição-do-sistema)
+    - [1 - Quais as dependências externas?](#1---quais-as-dependências-externas)
+    - [2 - Quais os Pontos de Entrada? (EntryPoints)](#2---quais-os-pontos-de-entrada-entrypoints)
+    - [3 - Quais os Pontos de Saída? (ExitPoints)](#3---quais-os-pontos-de-saída-exitpoints)
+    - [4 - Quais os Assets?](#4---quais-os-assets)
+    - [5 - Quais os Níveis de acesso? (Trust Levels)](#5---quais-os-níveis-de-acesso-trust-levels)
+  - [Classificação das Ameaças](#classificação-das-ameaças)
+    - [Tipos de Ameaças](#tipos-de-ameaças)
+    - [Tabela Informativa STRIDE](#tabela-informativa-stride)
+    - [Análise de Ameaças](#análise-de-ameaças)
+  - [Contramedidas e Recomendações](#contramedidas-e-recomendações)
+    - [STRIDE - Técnicas de mitigação de ameaças](#stride---técnicas-de-mitigação-de-ameaças)
+    - [ASF -  Ténicas de mitigação de Ameaças](#asf----ténicas-de-mitigação-de-ameaças)
+  - [Conclusão](#conclusão)
+
+
+
 # Modelagem de Ameaças ( Threat Modelling )
 
 
