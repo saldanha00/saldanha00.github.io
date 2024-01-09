@@ -6,61 +6,73 @@ img_path: ../../assets/images
 image:
   path: thumb_post_clickjacking.png
   alt: Iframes do Clickjacking
-tags: [cybersecurity,web]     # TAG names should always be lowercase
+tags: [cybersecurity,web,clickjacking,securityheaders]     # TAG names should always be lowercase
 ---
 
 
 <!-- {% include embed/youtube.html id='ORRaHV9HSrI' %} -->
 
 
----
-
-- [Objetivo do Artigo](#objetivo-do-artigo)
-- [1 - O que é clickjacking](#1---o-que-é-clickjacking)
-- [2 - Cenário de ataque Clickjacking](#2---cenário-de-ataque-clickjacking)
-  - [2.1 - Clickjacking utilizando Imagens](#21---clickjacking-utilizando-imagens)
-  - [2.2 - Clickjacking para Download de malwares](#22---clickjacking-para-download-de-malwares)
-  - [2.3 - Clickjacking Clássico (iframes)](#23---clickjacking-clássico-iframes)
+- [O que é clickjacking](#o-que-é-clickjacking)
+- [Cenário de ataque Clickjacking](#cenário-de-ataque-clickjacking)
+  - [Clickjacking utilizando Imagens](#clickjacking-utilizando-imagens)
+  - [Clickjacking para Download de malwares](#clickjacking-para-download-de-malwares)
+  - [Clickjacking Clássico (iframes)](#clickjacking-clássico-iframes)
+    - [Testando para clickjacking](#testando-para-clickjacking)
 - [Bypassing de CSRF](#bypassing-de-csrf)
 - [Como Corrigir Clickjacking?](#como-corrigir-clickjacking)
+  - [CSP (Content-Security-Policy)](#csp-content-security-policy)
+- [response.headers\['X-Frame-Options'\] = 'SAMEORIGIN'](#responseheadersx-frame-options--sameorigin)
+  - [X-FRAME-OPTIONS](#x-frame-options)
+  - [Técnicas de Frame-Busting](#técnicas-de-frame-busting)
+  - [Atributo SameSite](#atributo-samesite)
 - [Conclusão](#conclusão)
 - [Fontes e Referências](#fontes-e-referências)
 
 
+---
 
-## Objetivo do Artigo
+
+
+
 
 {: .prompt-warning }
 > Qual problema esse artigo resolve ?
 
-Clickjacking por vezes parece ser algo abstrato e de dificil compreensão. A solução costuma ter relação com implementação de headers de segurança, entretanto não é tão simples de compreender o que de fato é o clickjacking, **como se explora, como se testa a vulnerabilidade e principalmente: como se corrige?**
+Clickjacking por vezes parece ser algo abstrato e pelo fato de usualmente ser utilizado em conjunto com outras vulnerabilidades pode ser de dificil compreensão.
+
+Em alguns casos o clickjacking é resumido apenas em sites incorporados em iframes e isso não é 100% a realidade do clickjacking.
+
+Vamos entender um pouco sobre CSP e X-Frame-Options, mas não somente isso. Vamos tentar simplificar com vários exemplos o que de fato é o clickjacking, **como se explora?, como se testa a vulnerabilidade? e como se corrige?**
 
 ---
 
 {: .prompt-tip }
 > O que vamos fazer?
 
-Nesse artigo vamos demonstrar como funciona o clickjacking, quais os principais cenários de ataque, como testar aplicações para clickjacking e quais o headers de segurança precisamos implementar para eliminar essa vulnerabilidades.
+Nesse artigo vamos demonstrar como funciona o clickjacking, quais os principais cenários de ataque, como testar aplicações para clickjacking e quais o headers de segurança precisamos implementar para eliminar essa vulnerabilidade.
 
 ---
 
-## 1 - O que é clickjacking
+# O que é clickjacking
 
-Clickjacking tem em sua etimologia a descrição de "roubo de clicks" onde basicamente um atacante se esforça para "roubar" ou coletar o click que iria para outro site ou outro local. 
+Clickjacking tem em sua etimologia a tradução para "roubo de clicks" onde basicamente um atacante se esforça para "roubar" ou coletar o click que iria para outro site ou outro local.
 
 Imagine que você abre seu navegador e quer acessar o seu internet banking. E em algum momento você vai precisar clicar em botões, links, campos de texto, etc... 
 
-**Toda a ideia do clickjacking é fomentar um ambiente para que seja possível que a vítima acredite que legitimamente está clicando em algo**, nesse caso, o internet banking, ela consegue até visualizar com certa familiaridade onde está clicando, mas existe um "botão" transparente na frente em que vai roubar o click da vítima e direciona-la para um download de um malware, ou para um site ficticio.
+**Toda a ideia do clickjacking é fomentar um ambiente para que seja possível que a vítima acredite que legitimamente está clicando em algo**, nesse caso do internet banking, a vítima consegue até visualizar com certa familiaridade onde está clicando, mas existe um "botão" transparente na frente em que vai roubar o click da vítima e direciona-la para um download de um malware, ou para um site ficticio por exemplo.
 
-Geralmente o clickjacking envolve a incorporação de um site em um "iframe" e a sobreposição de um botão invisível em cima de desse iframe. 
+Geralmente o clickjacking envolve a incorporação de um site em um "frame" e a sobreposição de um botão invisível em cima de desse frame. 
 
 Dito isso, é possível afirmar que o **clickjacking geralmente vem acompanhado de um site malicioso** que contém em algum lugar da tela o clickjacking.
 
-## 2 - Cenário de ataque Clickjacking
+![[Clickjacking Iphone](https://blog.intigriti.com/hackademy/clickjacking/)](clickjacking_iphone.jpeg "https://blog.intigriti.com/hackademy/clickjacking/")
+
+# Cenário de ataque Clickjacking
 
 Ok, essa é a teoria. Vamos ver alguns cenários de utilização de clickjacking para absorver melhor o conhecimento.
 
-### 2.1 - Clickjacking utilizando Imagens
+## Clickjacking utilizando Imagens
 
 Imagine que Jonas está em uma conversa informal pela internet quando percebe poderia utilizar um meme que está no "hype" popularmente conhecido como "meme do pão francês brasileiro" encaixaria muito bem no contexto da conversa, Jonas lembra do meme mas não sabe exatamente onde ele está armazenado para compartilhar.
 
@@ -78,132 +90,140 @@ Ao passar o mouse em cima do meme, percebe que é "clicável", prontamente Jonas
 
 ![clickjacking](clickjacking.gif){: .normal w="700" h="400" }
 
-Aqui temos um exemplo de clickjacking. No gif acima é possível ver que Jonas foi redirecionado para um link arbitrariamente escolhido pelo atacante. Ao pensar que estava clicando no meme quando na verdade estava clicando em uma camada posta propositalmente na frente do meme.
+Aqui temos um exemplo de clickjacking. No gif acima é possível ver que Jonas foi redirecionado para um link arbitrariamente escolhido pelo atacante. Ao pensar que estava clicando no meme quando na verdade estava clicando em uma camada invisivel posta propositalmente na frente do meme.
 
-  ```html
-    <img src="images/memes1.jpeg" alt="Meme 1">
-  ```
+<details>
+    <summary>Código HTML</summary>
+    
+    {% highlight html %}
+        <body>
+            <h1>Top 15 Memes 2023</h1>
+            <div class="iframe-container">
+                <img src="images/memes1.jpeg" alt="Meme 1">
+                <a href="https://media.tenor.com/He2W0AQvZfsAAAAC/hacked-hack.gif" class="invisible-link" target="_blank" rel="noopener noreferrer"></a>
+            </div>
+        </body>
+    {% endhighlight html %}
+
+</details>
+<details>
+    <summary>Código CSS</summary>
+    
+    {% highlight css %}
+
+                .invisible-link {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 999;
+                    cursor: pointer;
+                }
+                .iframe-container {
+                    display: inline-block;
+                    margin: 0 10px;
+                    position: relative;
+                }
+    {% endhighlight css %}
+</details>
 
 <br>
-
-E a outra camada, que fica por cima da imagem é um link que leva a uma origem arbitrária. Atenção para a class "invisible-link":
-
-```html
-<body>
-    <h1>Top 15 Memes 2023</h1>
-    <div class="iframe-container">
-        <img src="images/memes1.jpeg" alt="Meme 1">
-	      <a href="https://media.tenor.com/He2W0AQvZfsAAAAC/hacked-hack.gif" class="invisible-link" target="_blank" rel="noopener noreferrer"></a>
-    </div>
-</body>
-```
-
-CSS:
-
-```css
-        .invisible-link {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 999;
-            cursor: pointer;
-        }
-        .iframe-container {
-            display: inline-block;
-            margin: 0 10px;
-            position: relative;
-        }
-```
-
-Essa é uma forma possível do clickjacking ser utilizado, mas apenas redirecionar links pode não ser muito efetivo, então vamos ver outros cenários.
+Essa é uma forma possível do clickjacking ser utilizado, mas apenas redirecionar links pode não ser muito efetivo, para esse ataque funcionar o atacante precisa de bastante criativade e trabalho no CSS da página. Vamos ver outros cenários.
 
 ---
 
-### 2.2 - Clickjacking para Download de malwares
+## Clickjacking para Download de malwares
 
 Usando o mesmo princípio da busca pelo meme em alta, ao invés de redirecionar a vítima para um link arbitrário, iremos fazer a vítima realizar o download involuntário ao clicar na imagem.
 
 
 ![clickjacking2](download_malware.gif){: .normal w="700" h="400" }
 
-```html
-<body>
-    <h1>Top 15 Memes 2023</h1>
-    <div class="iframe-container">
-        <img src="images/memes1.jpeg" alt="Meme 1">
-	<a href="images/malware.txt" class="invisible-link" rel="noopener noreferrer" download></a>
-    </div>
-</body>
-```
+<details>
+    <summary>Código HTML</summary>
+    
+    {% highlight html %}
+        <body>
+            <h1>Top 15 Memes 2023</h1>
+            <div class="iframe-container">
+                <img src="images/memes1.jpeg" alt="Meme 1">
+            <a href="images/malware.txt" class="invisible-link" rel="noopener noreferrer" download></a>
+            </div>
+        </body>
+    {% endhighlight html %}
+</details>
+<br>
+<details>
+    <summary>Aqui está o código completo (HTML + CSS)</summary>
+    {% highlight html %}
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Meme Page</title>
+            <style>
+                body {
+                    font-family: 'Courier New', monospace;
+                    text-align: left;
+                    margin: 0;
+                    padding: 0;
+                    background-color: #255255255;
+                }
+
+                h1 {
+                    color: #000;
+                    margin-bottom: 20px;
+                }
+
+                .iframe-container {
+                    display: inline-block;
+                    margin: 0 10px;
+                    position: relative;
+                }
+
+                /* Link Invisível */
+                .invisible-link {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 999;
+                    cursor: pointer;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Top 15 Memes 2023</h1>
+            <div class="iframe-container">
+                <img src='images/memes1.jpeg' alt="Meme 1">
+                <img src='images/memes2.jpeg' alt="Meme 2">
+            <!-- redireciona arbitrariamente -->
+        <!-- <a href="https://media.tenor.com/He2W0AQvZfsAAAAC/hacked-hack.gif" class="invisible-link" target="_blank" rel="noopener noreferrer"></a>-->
+            <!-- causa o download de malware -->
+            <a href="{ { url_for('static',filename='images/malware.txt') } }" class="invisible-link" rel="noopener noreferrer" download></a>
+            </div>
+        </body>
+        </html>
+    {% endhighlight html %}
+</details>
+<br>
+Com isso, seria até plausível imaginar que a vítima pensou que baixou a própria imagem do meme para máquina, e ao clicar é executado o malware. 
+
+Existe a possibilidade do atacante forçar o download do malware e logo em seguida redirecionar para o site original, mascarando o download.
+
+>Podemos observar nesse cenário que o clickjacking pode ser bem perigoso dependendo da criatividade do atacante. **Se utilizado junto com outras técnicas como pharming pode ser desastroso.**
+
 ---
 
-Aqui está o código completo:
-
-```html
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meme Page</title>
-    <style>
-        body {
-            font-family: 'Courier New', monospace;
-            text-align: left;
-            margin: 0;
-            padding: 0;
-            background-color: #255255255;
-        }
-
-        h1 {
-            color: #000;
-            margin-bottom: 20px;
-        }
-
-        .iframe-container {
-            display: inline-block;
-            margin: 0 10px;
-            position: relative;
-        }
-
-        /* Link Invisível */
-        .invisible-link {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 999;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <h1>Top 15 Memes 2023</h1>
-    <div class="iframe-container">
-        <img src='images/memes1.jpeg' alt="Meme 1">
-        <img src='images/memes2.jpeg' alt="Meme 2">
-	<!-- redireciona arbitrariamente -->
-<!-- <a href="https://media.tenor.com/He2W0AQvZfsAAAAC/hacked-hack.gif" class="invisible-link" target="_blank" rel="noopener noreferrer"></a>-->
-	<!-- causa o download de malware -->
-	<a href="{{ url_for('static',filename='images/malware.txt') }}" class="invisible-link" rel="noopener noreferrer" download></a>
-    </div>
-</body>
-</html>
-```
-
-Com isso, o atacante pode até imaginar que baixou o próprio meme para máquina, e ao clicar é executado o malware. 
-
-Podemos observar nesse cenário que o clickjacking pode ser bem perigoso dependendo da criatividade do atacante. **Se utilizado junto com outras técnicas como pharming pode ser desastroso.**
-
----
-
-### 2.3 - Clickjacking Clássico (iframes)
+## Clickjacking Clássico (iframes)
 
 O ataque clássico de clickjacking basicamente envolve incorporar uma página legítima em um frame, e induzir a vítima a clicar em determinados locais.
 
-Para explicar o ataque clássico, vamos imaginar uma aplicação web que contém uma página de reset de senha. Para resetar a senha obviamente você precisa estar com a sessão ativa (logado) na aplicação.
+Esse tipo de ataque é muito utilizado para bypassar formulários que tem a proteção [CSRF](https://owasp.org/www-community/attacks/csrf).
+
+Para explicar o ataque clássico, vamos imaginar uma aplicação web que contém uma página de troca de senha. Para trocar a senha naturalmente você precisa estar com a sessão ativa (logado) na aplicação.
 
 O formulário de reset de senha é protegido por token único para cada sessão (CSRF token), então um ataque do tipo CSRF não é viável.
 
@@ -213,6 +233,8 @@ App vulneravel:
 
 ![reset_senha](reset_senha_1.png){: .normal w="700" h="400" }
 
+### Testando para clickjacking
+
 Para testar se essa app é de fato vulneravel a um ataque de clickjacking, vamos tentar incorporar essa página em um iframe de outro domínio. Para isso vamos montar um html local e tentar incorpora-lo.
 
 E para comparação, iremos tentar incorporar uma página que sabemos que é segura, o google. E colocaremos os dois iframes um do lado do outro:
@@ -221,7 +243,10 @@ E para comparação, iremos tentar incorporar uma página que sabemos que é seg
 
 Abaixo tem o código html utilizado, repare que a incorporação acontece na tag "<iframe>":
 
-```html
+<details>
+<summary>Código HTML</summary>
+
+{% highlight html %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -329,39 +354,48 @@ Abaixo tem o código html utilizado, repare que a incorporação acontece na tag
 
 </body>
 </html>
-```
-
+{% endhighlight html %}
+</details>
+<br>
 Maravilha, agora sabemos que a app de fato pode ser incorporada em um iframe e pode ser utilizada em um ataque de clickjacking.
 
 A partir daqui, o principio é o mesmo. Adicionar uma camada transparente na frente do iframe para induzir o atacante a clicar no "Redefinir Senha" para redefinir a senha para vazio, ou em casos mais elaborados iludir o usuário a preencher campos. Enfim, aqui a criatividade é a principal arma para o ataque ser bem sucedido.
 
 ![clickjacking_lab](lab_clickjacking.gif){: .normal w="700" h="400" } 
 
+<br>
+
+>Perceba que o fato da página permitir a incorporação em um iframe de outro domínio possibilita ataques de clickjacking, portanto podemos inferir que a página incorporada é vulneravel a ataques de clickjacking.
+
 ---
 
-## Bypassing de CSRF
+# Bypassing de CSRF
 
 Como comentado anteriormente, um atacante pode utilizar o clickjacking para **bypassar o controle CSRF**. Como muitos de vocês devem saber, CSRF é um token único para ser utilizado principalmente em formularios. E o clickjacking permite que o próprio usuário clique, com seu "próprio csrf". Dessa forma não importa se o formulario possui ou não o token CSRF pois quem irá preencher o formulario é a própria vitima ao ser enganada pelo clickjacking.
 
+>Até aqui você já deve ter percebido que 90% do sucesso do clickjacking depende do CSS desenvolvido pelo atacante.
+
 ---
 
-## Como Corrigir Clickjacking?
+# Como Corrigir Clickjacking?
+
+## CSP (Content-Security-Policy)
 
 A solução mais simples envolve a **adição do header de segurança "CSP" que significa Content-Security-Policy com a diretiva "frame-ancestors"**. A qual permite gerenciar quando a página pode ser incorporada em um frame por outros domínios.
 
-Também é possível com o header "X-FRAME-OPTIONS" entretanto esse header está obsoleto e já foi substituido totalmente pelo CSP com a chegada do html5
-
 Ou seja, CSP que é um header de resposta que permite adicionar políticas de segurança aos sites. Dependendo da diretiva utilizada você pode assegurar contra clickjacking ou XSS.
-
->OBS: O CSP é suportado para ser utilizado em meta tags, entretanto a diretiva frame-ancestors não tem essa capacidade ainda.
 
 ```text
 frame-ancestors 'none';
 ```
 
-Vou deixar dois exemplos de servidores simples utilizando python que fazem a injeção do header CSP. Atenção que a linha que injeta o x-frame-options está comentada pois está obsoleto.
+>OBS: O CSP é suportado para ser utilizado em meta tags, entretanto a diretiva frame-ancestors não tem essa capacidade ainda.
 
-```python
+Vou deixar um exemplo de um servidor simples utilizando python que fazem a injeção do header CSP. Atenção que a linha que injeta o x-frame-options está comentada pois está obsoleto.
+
+<details>
+<summary>Código python3</summary>
+{% highlight python %}
 from flask import Flask, render_template, make_response
 from flask_socketio import SocketIO
 
@@ -379,20 +413,80 @@ def index():
 if __name__ == '__main__':
     # Use a porta 80 para HTTP (pode exigir privilégios de administrador)
     socketio.run(app,host='0.0.0.0',port=80, debug=True)
-
-```
+{% endhighlight python %}
+</details>
+<br>
 
 E pelo simples fato de adicionar o header de segurança, o navegador não permite a incorporação de iframes que não estão especificados.
 
 Veja como no resultado como ao tentar importar novamente o site dos memes recebemos um "refused to connect"
 
-![corrigido_csp](corrigido_csp.png){: .normal w="700" h="400" }
+![corrigido_csp](corrigido_csp.png){: .normal w="500" h="400" }
+
+
+
+
+## X-FRAME-OPTIONS
+
+Também é possível com o header "X-FRAME-OPTIONS" entretanto **esse header está obsoleto e já foi substituido totalmente pelo CSP**. Mas como tudo em tecnologia, o "legado" ainda persiste em larga escala na internet, então vamos entender um pouco o XFO:
+
+> O Header X-Frame-Options tem três opcões: DENY, SAMEORIGIN, and ALLOW-FROM. 
+> 
+> O "DENY" previne que o conteúdo da sua página seja incorporado dentro de qualquer frame. 
+> Enquanto a opção "SAMEORIGIN" permite que seja incorporado pelos frames apenas do mesmo domínio da página. 
+> E o "ALLOW-FROM" basicamente permite que você especifique quais domínios tem autorizão para incorporar sua página em frames.
+
+## Técnicas de Frame-Busting
+
+Frame-busting envolve a criação de scripts que realizam validações recorrentes para descobrir se a página está sendo incorporada em algum frame, se estiver então geralmente o browser é forçado a redirecionar ou simplesmente quebrar o frame.
+
+É a correção mais "manual" e antiga que temos. Portanto é pouco recomendada. Mas em casos onde a inserção dos headers de segurança não são aplicáveis esse tipo de solução se encaixa bem. Vou deixar dois exemplos abaixo de códigos frame-busting padrões.
+
+<details>
+<summary>frame-busting padrão 1</summary>
+
+{% highlight javascript %}
+
+<script>
+    if (top != self) {
+        top.location.replace(self.location.href);
+    }
+</script>
+
+{% endhighlight %}
+
+</details>
+
+<details>
+<summary>frame-busting padrão 2</summary>
+
+{% highlight javascript %}
+
+<script>
+    if (window != window.top) {
+        window.top.location = window.location;
+    }
+</script>
+
+{% endhighlight %}
+
+</details>
+
+## Atributo SameSite
+
+Apesar da flag SameSite com a diretiva "Lax" ou "Strict" ser bastante utilizada para prevenir contra roubo de cookies pelo XSS, também é possível utilizar essa flag para mitigar o clickjacking.
+
+Se levarmos em consideração que boa parte dos ataques de clickjacking são relacionados a usuários interagindo com alguma sessão ativa como por exemplo uma sessão do seu ibanking, sabemos que por comportamento padrão do HTTP, que é um protocolo stateless, os dados de sessão estarão nos cookies.
+
+Dito isso, ao restringir o acesso do iframe aos cookies, mitigamos os ataques de clickjacking que envolvem que a vítima esteja logada em algum site.
+
+Para mais detalhes sobre esse recurso interessante recomendo a leitura: https://www.invicti.com/blog/web-security/same-site-cookie-attribute-prevent-cross-site-request-forgery/
 
 ---
 
-## Conclusão
+# Conclusão
 
-Clickjacking é uma vulnerabilidade que alguns programas de bugbounty desconsideram, e talve o clickjacking só pelo clickjacking não até não aparentar  grandes ameaças, mas quando combinado com pharming, phishing, xss e outras vulnerabilidades pode ser uma perigosa alavanca para o sucesso dos ataques.
+Clickjacking é uma vulnerabilidade que alguns programas de bugbounty desconsideram, e talvez o clickjacking só pelo clickjacking não até não aparentar  grandes ameaças, mas quando combinado com pharming, phishing, xss e outras vulnerabilidades pode ser uma perigosa alavanca para o sucesso dos ataques.
 
 Dito isso, vale lembrar que é sempre válido analisar os headers de resposta da aplicação. Procure pelos headers CSP com a diretiva frame-ancestors e pelo x-frame-options também. Se não houver um desses especificados, ou conter apenas os "*-report-only", vale a pena o teste para clickjacking.
 
@@ -400,10 +494,14 @@ Espero que depois desse artigo o conceito de clickjacking tenha ficado mais clar
 
 ---
 
-## Fontes e Referências
+# Fontes e Referências
 
 Fonte sobre CSP: https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Headers/Content-Security-Policy
 
 Fonte sobre x-frame-options estar obsoleto: https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Headers/X-Frame-Options
 
 Mais sobre implementação do CSP: https://content-security-policy.com/
+
+OWASP sobre Clickjacking: https://owasp.org/www-community/attacks/Clickjacking
+
+Como a flag "SameSite" pode mitigar o clickjacking: https://www.invicti.com/blog/web-security/same-site-cookie-attribute-prevent-cross-site-request-forgery/
