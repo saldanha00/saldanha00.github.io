@@ -67,6 +67,8 @@ Geralmente o clickjacking envolve a incorporação de um site em um "frame" e a 
 
 Dito isso, é possível afirmar que o **clickjacking geralmente vem acompanhado de um site malicioso** que contém em algum lugar da tela o clickjacking.
 
+Também podemos afirmar que o clickjacking é um tipo de ataque "Client-Side", pois é um tipo de ataque que engana o usuário a interagir de uma forma específica com o site.
+
 ![[Clickjacking Iphone](https://blog.intigriti.com/hackademy/clickjacking/)](clickjacking_iphone.jpeg "https://blog.intigriti.com/hackademy/clickjacking/")
 
 # Cenário de ataque Clickjacking
