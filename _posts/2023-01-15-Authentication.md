@@ -175,19 +175,29 @@ Bom, para esses casos, geralmente estamos falando de autenticação entre micros
 
 Existem várias soluções, mas pessoalmente eu acredito que a mais simples e confiável é a abstração da camada de autenticação do serviço ou microserviço em si.
 
-Abstrair todo o fluxo de autenticação/autorização para um servidor que trabalhe com oauth2 ou jwt.
+>Não vale a pena em um cenário de microserviços cada microserviço ter sua própria implementação de autenticação. Isso torna a autenticação descentralizada e com gerenciamento díficil. Muito suscetível a falhas. É melhor ter apenas um centralizador que seja responsável pela autenticação e autorização dos outros, similar ao funcionamento de um AD (Active Directory).
 
-Para simplificar, pois não é o foco desse artigo e esse tema entre microserviços é bem longo... 
+Abstrair todo o fluxo de autenticação/autorização para um servidor que trabalhe com oauth2, jwt, saml 2.0 e afins.
 
-Sequência de autenticação
-1 - API A quer comunicar com API B
-2 - API A faz uma requisição de login para um servidor C
-3 - Servidor C retorna sucesso no login e responde com um token de acesso
-4 - API A incorpora o token de acesso no body ou header da requisição e comunica com API B
-5 - API B valida o token de acesso no servidor C
-6 - Servidor C valida o token e retorna 200 ok para API B.
+Para simplificar, pois não é o foco desse artigo e esse tema de autenticação entre microserviços é bem longo... 
 
+Exemplificação de uma sequência de autenticação abstraída do microserviço:
 
+1. API A quer comunicar com API B
+2. API A faz uma requisição de acesso para um servidor C
+3. Servidor C valida API A e responde com um token de acesso com um perfil de acesso e tempo de expiração.
+4. API A incorpora o token de acesso no body ou header da requisição e comunica com API B
+5. API B valida o token de acesso no servidor C
+6. Servidor C confirma a validação do token e retorna 200 ok para API B.
+7. API A comunica de forma segura com API B, normalmente até expirar o token e o processo reiniciar.
+
+>Esse mesmo fluxo poderia ser adaptado para OAUTH 2.0, poderia ser utilizado também [keycloak](https://www.keycloak.org/) para casos mais genéricos ou casos particulares como o caso do springboot, temos o [springboot security](https://spring.io/projects/spring-security/) em casos mais específicos.
+
+E claro, existe também outras formas de controlar o acesso como isolamento de rede e whitelisting.
+
+O maior risco aqui é um insider realizar requisições para uma API/JOB que foi projetado para ser acessado apenas por outras aplicações.
+
+Mas esse é um tema bem complexo e se encaixaria perfeitamente em um artigo só para falarmos disso. Hoje vamos focar nas senhas dos humaninhos.
 
 ## Nem todo sistema precisa de autenticação ?
 
