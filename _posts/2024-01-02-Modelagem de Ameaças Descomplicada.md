@@ -30,6 +30,7 @@ tags: [ciberecurity,appsec]     # TAG names should always be lowercase
     - [STRIDE - Técnicas de mitigação de ameaças](#stride---técnicas-de-mitigação-de-ameaças)
     - [ASF -  Ténicas de mitigação de Ameaças](#asf----ténicas-de-mitigação-de-ameaças)
   - [Conclusão](#conclusão)
+  - [Referências](#referências)
 
 
 
@@ -256,3 +257,8 @@ Relacionado a Contramedidas e Recomendações, utilizar mais de um framework pod
 Modelagem de ameaças é um passo importante se você deseja construir sistemas seguros, pode ser de grande valia no ínicio do projeto, mas também pode ser aproveitado nos outros momentos do ciclo de vida do software.
 
 Sun Tzu na arte da guerra explica que a vitória está diretamente ligada ao conhecimento que temos de nós mesmos e do seu inimigo. A modelagem exige um brando conhecimento da sua aplicação e do seu atacante.
+
+## Referências
+
+- NIST SP 800-154 sobre Threat Modelling - https://csrc.nist.gov/files/pubs/sp/800/154/ipd/docs/sp800_154_draft.pdf
+- OWASP Threat Modelling STRIDE - https://owasp.org/www-community/Threat_Modeling_Process#stride
