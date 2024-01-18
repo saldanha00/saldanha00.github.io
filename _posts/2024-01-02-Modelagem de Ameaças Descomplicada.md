@@ -12,7 +12,9 @@ tags: [ciberecurity,appsec]     # TAG names should always be lowercase
   - [O que é a Modelagem de Ameaças?](#o-que-é-a-modelagem-de-ameaças)
     - [Diferenciação entre Ameaça x Vulnerabilidade.](#diferenciação-entre-ameaça-x-vulnerabilidade)
       - [Exemplos de cenários entre Ameaça x Vulnerabilidade](#exemplos-de-cenários-entre-ameaça-x-vulnerabilidade)
-      - [Por que devo incluir uma modelagem de ameaças?](#por-que-devo-incluir-uma-modelagem-de-ameaças)
+    - [Diferenciação entre Modelagem de Ameaças e Gerenciamento de Risco](#diferenciação-entre-modelagem-de-ameaças-e-gerenciamento-de-risco)
+    - [Por que devo incluir uma modelagem de ameaças?](#por-que-devo-incluir-uma-modelagem-de-ameaças)
+      - [Resumindo as principais vantagens:](#resumindo-as-principais-vantagens)
   - [Começando a Modelar: Decomposição do Sistema](#começando-a-modelar-decomposição-do-sistema)
     - [1 - Quais as dependências externas?](#1---quais-as-dependências-externas)
     - [2 - Quais os Pontos de Entrada? (EntryPoints)](#2---quais-os-pontos-de-entrada-entrypoints)
@@ -22,6 +24,7 @@ tags: [ciberecurity,appsec]     # TAG names should always be lowercase
   - [Classificação das Ameaças](#classificação-das-ameaças)
     - [Tipos de Ameaças](#tipos-de-ameaças)
     - [Tabela Informativa STRIDE](#tabela-informativa-stride)
+    - [Mais exemplos do STRIDE](#mais-exemplos-do-stride)
     - [Análise de Ameaças](#análise-de-ameaças)
   - [Contramedidas e Recomendações](#contramedidas-e-recomendações)
     - [STRIDE - Técnicas de mitigação de ameaças](#stride---técnicas-de-mitigação-de-ameaças)
@@ -35,7 +38,7 @@ tags: [ciberecurity,appsec]     # TAG names should always be lowercase
 
 ## O que é a Modelagem de Ameaças?
 
-É uma etapa no processo de desenvolvimento de software seguro, **idealmente realizada durante a fase de planejamento do software** (antes de iniciar a codificação) mas nada impede de fazer em outros momentos. Essa etapa **visa identificar as ameaças que aquele software irá encontrar durante o seu ciclo de vida**, além de **pontuar as contramedidas necessárias para evitar ou mitigar que aquelas ameaças se tornem vulnerabilidades**.
+É uma etapa no processo de desenvolvimento de software seguro, **idealmente realizada durante a fase de planejamento do software** (antes de iniciar a codificação) mas nada impede de fazer em outros momentos. Essa etapa **visa identificar as os tipos de ataques que aquele software poderá encontrar durante o seu ciclo de vida**, além de **pontuar as contramedidas necessárias para evitar ou mitigar que aquelas ameaças se tornem vulnerabilidades**.
 
 Pode-se dizer que **A modelagem parte de uma observação do sistema a partir de uma perspectiva atacante**. Se eu fosse atacar esse sistema amanhã, por onde eu começaria ? É com essa linha de raciocínio que a modelagem deve fluir.
 
@@ -74,7 +77,13 @@ Uma Ameaça é uma vulnerabilidade em Potencial. É uma ação ou evento que pod
 >"Exemplo 03 - Diferença entre Ameaça x Vulnerabilidade? - Descarte de Ameaças"
     Considere o mesmo cenário: "Estou planejando desenvolver um sistema que irá desacoplar uma feature do monolito e passará a receber dados bancários e indexar em uma base de dados. A aplicação irá conter 03 componentes: kafka, redshift e spring boot application".<br><br> Como mencionei antes, não há vulnerabilidades, mas quais as ameaças não entrariam nesse cenário ? Um exemplo poderia ser uma ameaça do tipo "Escalação de privilégios" pois provavelmente esse spring boot aplication teria apenas um nível de acesso, então não faria sentido uma ameaça de escalação de privilégios, o qual iria precisar de pelo menos dois níveis de acesso, geralmente um nível de usuário e outro de administrador.
 
-#### Por que devo incluir uma modelagem de ameaças?
+### Diferenciação entre Modelagem de Ameaças e Gerenciamento de Risco
+
+A modelagem tem o intuito de identificar os tipos de ataques que podem comprometer o sistema e geralmente é realizado por pela engenharia de cibersegurança ou pela engenharia de software.
+
+Gerenciamento de risco ou Risk Management, como é mais falado, vai tratar sobre decisões e "trade-offs" sobre como lidar com os riscos e ameaças identificados. Geralmente é realizado por profissionais de gestão de risco e advogados.
+
+### Por que devo incluir uma modelagem de ameaças?
 
 Agora que você já sabe a relação entre ameaça e vulnerabilidade, deve ter percebido que **A vulnerabilidade nada mais é do que a ameaça que não foi tratada**. Então imagine que você tem duas opções:
 
@@ -90,12 +99,19 @@ Consequência 3:  Se um time não tem o hábito de desenvolver software seguro, 
 <details>
 <summary>2 - Fazer o processo de modelagem de ameaças e identificar as ameaças que a sua aplicação estará sujeita a enfrentar.</summary>
 
-Consequência 1: Sua aplicação recebe um artefato de segurança (um documento oficial) que sua aplicação passou pela etapa de modelagem de ameaças e que já identificamos os riscos envolvidos.<br><br>
+Consequência 1: Sua aplicação recebe um artefato de segurança (um documento oficial) que sua aplicação passou pela etapa de modelagem de ameaças e que já identificamos as ameaças envolvidas.<br><br>
 
 Consequência 2: Todo o processo de desenvolvimento do software vai levar em consideração a modelagem realizada, ou seja, não vamos gastar tempo desenvolvendo uma feature insegura só para ter que refazer mais tarde.<br><br>
 
 Consequência 3: Seu time ganha mais expertiese com threat modelling, aumenta a colaboração entre times (Engenharia de software e Appsecs) e sua aplicação fica mais próxima de alcançar o ideal do SSDLC (Secure Software Develoment Life Cycle)
 </details>
+
+#### Resumindo as principais vantagens:
+
+- Melhor entendimento e clareza dos pontos referentes a segurança da sua aplicação.
+- Entrega de produtos mais seguros e melhores.
+- Força o time a pensar em possíveis brechas da aplicação, levando a proatividade na correção de bugs.
+- Um passo mais próximo de estar na esteira segura (S-SDLC).
 
 ---
 
@@ -178,6 +194,12 @@ Por ser um conceito genérico, existem diversas ameaças no mundo de cibersegura
 | **D** | Denial of Service  | **Sobrecarrega o sistema a ponto de afetar a experiência dos clientes (Negação de Serviço)**       |  Exemplo 1: Um ataque de inundação de tráfego sobrecarrega um servidor, tornando-o inacessível para usuários legítimos.<br>Exemplo 2: Um invasor utiliza técnicas de ataque distribuído de negação de serviço (DDoS) para sobrecarregar uma rede ou serviço.<br>Exemplo 3: Um hacker explora uma vulnerabilidade de exaustão de recursos para esgotar os recursos de um sistema, tornando-o com alta lentidão ou indisponível.  |
 | **E** | Elevation of Privileges  | **Um usuário consegue obter acesso a recursos não-autorizados (Elevação de Privilégios)**       |  Exemplo 1: Um invasor obtém acesso a um sistema com privilégios de usuário comum e, em seguida, explora uma vulnerabilidade para obter privilégios administrativos.<br>Exemplo 2: Um atacante manipula um cookie de autenticação para elevar seus privilégios em um aplicativo web.<br>Exemplo 3: Um atacante utiliza uma técnica de escalada de privilégios para obter acesso a informações ou recursos restritos.  |
 
+
+### Mais exemplos do STRIDE
+
+Eu acredito que os exemplos são a melhor abordagem para entender as ameaças do STRIDE, então vou deixar um link do artigo ["The Threats To Our Products"](https://adam.shostack.org/microsoft/The-Threats-To-Our-Products.docx), criado pelos *Praerit Garg and Loren Kohnfelder*, os principais criadores do STRIDE.
+
+> Curiosidade: O artigo foi publicado dia 01 de abril 1999, bem no dia mentira D:
 
 
 ### Análise de Ameaças
