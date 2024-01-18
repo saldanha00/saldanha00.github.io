@@ -160,7 +160,11 @@ Então, mapeamos também os ExitPoints.
 
 Um sistema pode conter 10 vulnerabilidades e nenhuma ser atrativa para um atacante, por exemplo: Se um blog que dispõe poemas sobre flores tiver vulnerabilidades, não necessariamente ele irá ser atacado porque os assets podem não ser atrativos para o atacante.
 
-Então, para a modelagem de ameaças os Assets são como os "Alvos", o tesouro que o atacante busca conseguir. Geralmente são lista de clientes, dados bancários, transações de dinheiro, credenciais de acesso... As vezes o alvo é o frontpage da página apenas para fazer um anúncio (popularmente chamado de defacement). As vezes o objetivo é apenas causar lentidão. As variações dependem muito da origem do ataque e da experiência do atacante.
+Então, para a modelagem de ameaças os Assets são como os "Alvos", o tesouro que o atacante busca conseguir. Geralmente são listas de clientes, dados bancários, transações financeiras, credenciais de acesso... As vezes o alvo é o frontpage da página apenas para fazer um anúncio (popularmente chamado de defacement). As vezes o objetivo é apenas causar lentidão e assim alterar a experiência dos usuários. As variações dependem muito da origem do ataque e da experiência do atacante.
+
+Mas via de regra o asset é aquilo que o atacante buscaria.
+
+No [NIST SP 800-154](https://csrc.nist.gov/files/pubs/sp/800/154/ipd/docs/sp800_154_draft.pdf) é disposto sobre modelagem de ameaças "data-centric" que leva em consideração dados PII o principal alvo do atacante. Vale a pena a leitura se esse for o seu caso.
 
 Ou seja, identifique no sistema quais são os Assets que o atacante buscaria.
 
