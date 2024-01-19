@@ -166,6 +166,12 @@ Mas via de regra o asset é aquilo que o atacante buscaria.
 
 No [NIST SP 800-154](https://csrc.nist.gov/files/pubs/sp/800/154/ipd/docs/sp800_154_draft.pdf) é disposto sobre modelagem de ameaças "data-centric" que leva em consideração dados PII o principal alvo do atacante. Vale a pena a leitura se esse for o seu caso.
 
+É importante ressaltar que asset nem sempre é relacionado a dados, pode ser simplesmente uma mensagem de erro que permite enumeração de usuário ou a possibilidade de deletar usuários no banco de dados.
+
+Tenha em mente que assets é aquilo que é "atrativo" para o atacante.
+
+O OWASP tem uma lista bem robusta de exemplos de assets [aqui](https://owasp.org/www-community/Threat_Modeling_Process#stride)
+
 Ou seja, identifique no sistema quais são os Assets que o atacante buscaria.
 
 ### 5 - Quais os Níveis de acesso? (Trust Levels)
