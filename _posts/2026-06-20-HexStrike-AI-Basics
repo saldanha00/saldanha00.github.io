@@ -1,0 +1,97 @@
+---
+title: Senhas e Autenticação Segundo o NIST 800-63
+date: 2023-12-29 12:12:12 +/-TTTT
+categories: [Sharing Knowledge, Cybersecurity, Web]
+img_path: ../../assets/images
+image:
+  path: dog_internet.jpg
+  alt: Authentication
+tags: [cybersecurity,password,authentication,nist]     # TAG names should always be lowercase
+---
+
+
+
+- [O que é Identidade Digital](#o-que-é-identidade-digital)
+  - [O problema das Senhas](#o-problema-das-senhas)
+  - [Impersonation](#impersonation)
+  - [Senha com MFA](#senha-com-mfa)
+  - [Autenticação entre aplicações](#autenticação-entre-aplicações)
+    - [Aqui temos um problema. Como garantir a identidade digital das aplicações?](#aqui-temos-um-problema-como-garantir-a-identidade-digital-das-aplicações)
+  - [Nem todo sistema precisa de autenticação ?](#nem-todo-sistema-precisa-de-autenticação-)
+- [O que o NIST recomenda sobre Controle de acesso?](#o-que-o-nist-recomenda-sobre-controle-de-acesso)
+  - [Racional aplicado](#racional-aplicado)
+  - [Observações importantes](#observações-importantes)
+    - [Níveis do NIST](#níveis-do-nist)
+    - [Mente aberta para senhas.](#mente-aberta-para-senhas)
+  - [Principais Pontos do NIST SP 800-63B](#principais-pontos-do-nist-sp-800-63b)
+    - [Complexidade de Senha](#complexidade-de-senha)
+    - [Armazenamento das Senhas](#armazenamento-das-senhas)
+    - [Cookies de Sessão](#cookies-de-sessão)
+    - [Throttling](#throttling)
+    - [Reautenticação](#reautenticação)
+    - [Recuperação de senhas](#recuperação-de-senhas)
+    - [Logs e Auditoria](#logs-e-auditoria)
+    - [MFA](#mfa)
+  - [Senha com 08 caracteres podem ser quebradas instantâneamente?](#senha-com-08-caracteres-podem-ser-quebradas-instantâneamente)
+- [Então como escolher uma boa senha ?](#então-como-escolher-uma-boa-senha-)
+- [Conclusão](#conclusão)
+- [Fontes e Referências](#fontes-e-referências)
+
+
+---
+
+Esse artigo mostra como instalar e utilizar HexStrike AI MCP Agent para auxiliar no Pentest.
+
+## O que é HexStrike AI?
+
+HexStrike AI é um compilado de várias ferramentas escritas em python e prompts auxiliares de Pentest. Esse compilado é disponibilizado em formato de MCP. Para você ter uma ideia abaixo tem um print do arquivo hexstrike_mcp.py que está disponibilizado no repositório do autor.
+
+![](/opt/saldanha00.github.io/assets/images/nmap_hexstrike-ai.png)
+
+Note que a função "nmap_scan" é escrita em python e possui uma descrição em texto no início (linhas 285 a 296).
+
+Essa descrição é o contexto para o agente de IA saber quando usar.
+
+A anotação @mcp.tool() na linha 283 indica que essa função é uma ferramenta MCP dentro desse servidor mcp.
+
+Aqui você pode ter um insight:
+Então se eu criar um script em python que faça alguma coisa, ele pode ser tornar uma ferramenta MCP a ser usada por um agente de IA ? A resposta é sim.
+
+Mas nessa função não há nenhuma instrução para executar de fato o nmap. Agora observe com atenção a linha 307.  
+
+É realizado uma requisição para o endpoint "api/tools/nmap". Vamos ver no código como está construído essa rota:
+
+![](/opt/saldanha00.github.io/assets/images/nmap_hexstrike-ai-rotas.png)
+
+É possível perceber que na linha 10364 é chamado a função "execute_command_with_recovery" que executa comandos, passando o parâmetro "nmap".
+
+Aqui começa a ficar mais claro a lógica da aplicação..
+
+A função execute_command é grande demais para caber em um print. Mas dá uma olhada nesse trecho inicial:
+
+![](/opt/saldanha00.github.io/assets/images/hexstrike-ai_funcao_executa.png)
+
+Funciona basicamente como uma função "gateway" que recebe qual comando utilizar e seus parâmetros.
+
+Essa mesma lógica que vimos para o NMAP, ocorre para mais de 150 outras ferramentas de cibersegurança.
+
+Dito isso, acredito que tenha ficado mais claro o funcionamento básico desse mcp server e a definição informal: __"HexStrike AI é um compilado de várias ferramentas escritas em python e prompts auxiliares de Pentest"__
+
+## Beleza, mas o que é um MCP Server?
+
+MCP Server é literalmente um servidor que você utiliza que disponibiliza recursos para a sua IA.
+
+No caso do HexStrike-AI, o recurso disponibilizado são as funções em python definidas com as anotações "@mcp_tools".
+
+Ao utilizar um MCP Server, na prática você pode chamar a sua IA e dizer:
+
+Rode um Pentest na aplicação xpto, e utilize:
+
+nmap no alvo
+gobuster nas portas http/https
+nuclei nos endpoints
+
+e a IA irá utilizar os scripts do mcp_server para encontrar as ferramentas de NMAP, Gobuster e Nuclei.
+
+## Alguns resultados preliminares
+
